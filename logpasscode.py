@@ -69,6 +69,10 @@ class Login_password:
         while not self.age.isnumeric() or int(self.age) > 200:
             self.age = input("Invalid age. Enter it again: ").strip()
 
+        self.write_to_database(self.username, self.login, self.password, self.age)
+
+
+
     def log_in(self):
         print('log in')
 
@@ -103,6 +107,10 @@ class Login_password:
         data_users = mycursor.fetchall()
 
         return data_users
+
+    def write_to_database(self, username, login, password, age):
+        mycursor.execute(f"insert into users (username, login, password, age) values ('{username}', '{login}', '{password}', '{age}')")
+        mydb.commit()
 
 
 logpass = Login_password()
