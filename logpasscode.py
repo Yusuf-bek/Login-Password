@@ -134,10 +134,20 @@ class Login_password:
 
 
     def delete_account(self):
-        print('delete account')
+        self.clear_everything()
+        print("<<< Delete account >>>")
 
+        self.login = input("Enter your login: ").lower().strip()
+        while len(self.login) < 6 or len(self.login) > 30:
+            self.clear_everything()
+            self.login = input("Invalid login. 6 <= login <= 30: ").lower().strip()
 
+        self.password = input("Enter your password: ").lower().strip()
+        while len(self.password) < 8 or len(self.password) > 30:
+            self.clear_everything()
+            self.password = input("Invalid password. It should be at least 8, maximum 30: ").lower().strip()
 
+        self.delete_user(self.login, self.password)
 
 
 
@@ -197,6 +207,38 @@ class Login_password:
         elif logout_option == 'n':
             self.clear_everything()
             print("<<< You are in system >>>")
+
+    def delete_user(self, login, password):
+        if self.is_user_exists(login, password):
+            option = input("<<< Do you wish to delete your account [y/n] >>> ").lower().strip()
+
+            while option not in ['y', 'n']:
+                print("<<< Invalid input. Choose only y or n >>>")
+                option = input("<<< Do you wish to delete your account [y/n] >>> ").lower().strip()
+
+            if option == 'y':
+                mycursor.execute(f"delete from users where login='{login}'")
+
+                mydb.commit()
+                print('<<< Your account is deleted >>>')
+            else:
+                self.entrance()
+
+        else:
+            self.clear_everything()
+            print("<<< Login or password is invalid >>>")
+
+            option2 = input("Do you want to delete your account or go back to main menu [d/m]: ").lower().strip()
+
+            while option2 not in ['d', 'm']:
+                print("<<< You entered invalid option. Choose only d or m >>>")
+                option2 = input("Do you want to delete your account or go back to main menu [d/m]: ").lower().strip()
+
+            if option2 == 'd':
+                self.delete_account()
+            elif option2 == 'm':
+                self.entrance()
+
 
 
 logpass = Login_password()
