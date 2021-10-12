@@ -17,6 +17,8 @@ class Login_password:
         self.login = None
         self.password = None
         self.age = None
+        self.is_loggedin = False
+
 
     def entrance(self):
         self.entrance_text()
@@ -44,6 +46,8 @@ class Login_password:
         elif option == '4':
             self.delete_account()
 
+
+
     def register(self):
         self.clear_everything()
         self.registration_text()
@@ -53,7 +57,7 @@ class Login_password:
             self.clear_everything()
             self.registration_text()
             self.username = input(
-                "Invalid input. Username only contains letters or maximum length should be 30 ").lower().strip()
+                "Invalid input. Username only contains letters or maximum length should be 30: ").lower().strip()
 
         self.login = input("Enter your login: ").lower().strip()
         while len(self.login) < 6 or len(self.login) > 30 or self.is_login_exists(self.login):
@@ -70,6 +74,11 @@ class Login_password:
             self.age = input("Invalid age. Enter it again: ").strip()
 
         self.write_to_database(self.username, self.login, self.password, self.age)
+        self.is_loggedin = True
+        print("\n")
+        print("<<< You are in system >>>")
+        self.wish_to_logout()
+
 
 
     def log_in(self):
@@ -93,27 +102,45 @@ class Login_password:
             print("<<< You have entered wrong login or password >>>")
 
 
-            yes_no = input("<<< Do you want to register or login? [r/l]:  >>> ").lower().strip()
+            yes_no = input("<<< Do you want to register or login? [r/l]>>>  ").lower().strip()
 
             while yes_no not in ['r', 'l']:
                 self.clear_everything()
                 print("Invalid input. Enter only r or l")
-                yes_no = input("<<< Do you want to register or login? [r/l]:  >>> ").lower().strip()
+                yes_no = input("<<< Do you want to register or login? [r/l]>>>  ").lower().strip()
 
             if yes_no == 'r':
                 self.register()
             elif yes_no == 'l':
                 self.log_in()
 
-
+        self.is_loggedin = True
+        self.clear_everything()
+        print("<<< You are in system >>>")
+        self.wish_to_logout()
 
 
 
     def log_out(self):
-        print('log out')
+
+        if not self.is_loggedin:
+            self.clear_everything()
+            print("<<< First you have to login or register >>>")
+            self.entrance()
+        else:
+            self.clear_everything()
+            print("<<< You logged out >>>")
+
+
 
     def delete_account(self):
         print('delete account')
+
+
+
+
+
+
 
     def entrance_text(self):
         print("""
@@ -133,6 +160,7 @@ class Login_password:
     @staticmethod
     def registration_text():
         print("<<< Registration page >>>")
+
 
 
     def is_login_exists(self,input_login):
@@ -155,6 +183,20 @@ class Login_password:
         if password == data_users[0][0]:
             return True
         return False
+
+    def wish_to_logout(self):
+        logout_option = input("<<< Do you wish to log out? [y/n] >>> ").lower().strip()
+
+        while logout_option not in ['y', 'n']:
+            self.clear_everything()
+            print("<<< Invalid input. You can only write y or n >>>")
+            logout_option = input("<<< Do you wish to log out? [y/n] >>> ").lower().strip()
+
+        if logout_option == 'y':
+            self.log_out()
+        elif logout_option == 'n':
+            self.clear_everything()
+            print("<<< You are in system >>>")
 
 
 logpass = Login_password()
