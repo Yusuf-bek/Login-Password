@@ -25,7 +25,7 @@ class Login_password:
         if option == '':
             option = ' '
 
-        list_option = '1234'
+        list_option = ['1', '2', '3', '4']
 
         while option not in list_option:
             self.clear_everything()
@@ -58,7 +58,7 @@ class Login_password:
         self.login = input("Enter your login: ").lower().strip()
         while len(self.login) < 6 or len(self.login) > 30 or self.is_login_exists(self.login):
             self.clear_everything()
-            self.login = input("Invalid input. 6 <= login <= 30: ").lower().strip()
+            self.login = input("Invalid login. 6 <= login <= 30: ").lower().strip()
 
         self.password = input("Enter your password: ").lower().strip()
         while len(self.password) < 8 or len(self.password) > 30:
@@ -72,9 +72,42 @@ class Login_password:
         self.write_to_database(self.username, self.login, self.password, self.age)
 
 
-
     def log_in(self):
-        print('log in')
+        self.clear_everything()
+        print("<<< Log in >>>")
+
+        self.login = input("Enter your login: ").lower().strip()
+        while len(self.login) < 6 or len(self.login) > 30:
+            self.clear_everything()
+            self.login = input("Invalid login. 6 <= login <= 30: ").lower().strip()
+
+
+        self.password = input("Enter your password: ").lower().strip()
+        while len(self.password) < 8 or len(self.password) > 30:
+            self.clear_everything()
+            self.password = input("Invalid password. It should be at least 8, maximum 30: ").lower().strip()
+
+        if self.is_user_exists(self.login, self.password):
+            print("<<< Welcome to system >>>")
+        else:
+            print("<<< You have entered wrong login or password >>>")
+
+
+            yes_no = input("<<< Do you want to register or login? [r/l]:  >>> ").lower().strip()
+
+            while yes_no not in ['r', 'l']:
+                self.clear_everything()
+                print("Invalid input. Enter only r or l")
+                yes_no = input("<<< Do you want to register or login? [r/l]:  >>> ").lower().strip()
+
+            if yes_no == 'r':
+                self.register()
+            elif yes_no == 'l':
+                self.log_in()
+
+
+
+
 
     def log_out(self):
         print('log out')
@@ -111,6 +144,17 @@ class Login_password:
     def write_to_database(self, username, login, password, age):
         mycursor.execute(f"insert into users (username, login, password, age) values ('{username}', '{login}', '{password}', '{age}')")
         mydb.commit()
+
+    def is_user_exists(self, login, password):
+        mycursor.execute(f"select password from users where login='{login}'")
+        data_users = mycursor.fetchall()
+
+        if not data_users:
+            return False
+
+        if password == data_users[0][0]:
+            return True
+        return False
 
 
 logpass = Login_password()
